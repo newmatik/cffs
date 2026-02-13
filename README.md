@@ -72,6 +72,62 @@ prisma/
   seed.ts                 # Demo data seed script
 ```
 
+## Deployment
+
+The app runs as a single Docker container with an embedded SQLite database -- no separate database server needed.
+
+### Prerequisites
+
+- A Linux server (e.g. DigitalOcean $6/mo droplet, Hetzner VPS, or any machine with Docker)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+
+### Deploy in 3 Steps
+
+```bash
+# 1. Clone the repo
+git clone git@github.com:newmatik/cffs.git
+cd cffs
+
+# 2. Set your secret key (use a random string)
+echo 'AUTH_SECRET=your-random-secret-here' > .env
+
+# 3. Build and start
+docker compose up -d --build
+```
+
+The app will be running at `http://your-server-ip:3000`.
+
+On first startup, the database is automatically created and seeded with demo accounts (see Demo Accounts above).
+
+### Backup the Database
+
+The SQLite database lives in a Docker volume. To back it up:
+
+```bash
+# Copy the database file out of the container
+docker compose cp app:/app/data/cffs.db ./backup-$(date +%Y%m%d).db
+```
+
+### Update to a New Version
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+The entrypoint script automatically applies any schema changes on startup.
+
+### Using a Custom Domain (Optional)
+
+To access the app via a domain name with HTTPS, put a reverse proxy like [Caddy](https://caddyserver.com/) in front of it:
+
+```bash
+# Install Caddy on the server, then:
+caddy reverse-proxy --from your-domain.com --to localhost:3000
+```
+
+Caddy handles HTTPS certificates automatically.
+
 ## Currency
 
 All amounts are in Philippine Peso (PHP), displayed as ₱.
