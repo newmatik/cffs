@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Christ Followers - Financial Management System
+
+A web application for managing church member contributions, savings balances, and micro-loans.
+
+## Features
+
+- **Dashboard** -- Overview of total members, deposits, outstanding loans, and monthly collections
+- **Members** -- Searchable member list with savings balances and detailed profiles
+- **Transactions** -- Record deposits and withdrawals, view full transaction history
+- **Loans** -- Manage micro-loan applications, approvals, payments, and amortization schedules
+- **Reports** -- Download Excel reports for transactions, balances, loans, and collections
+- **Member Portal** -- Members can view their own account balance, history, and loan status
+- **Role-based Access** -- Admin, Officer, and Member roles with appropriate permissions
+
+## Tech Stack
+
+- **Next.js 16** (App Router)
+- **Prisma + SQLite** (file-based database)
+- **Tailwind CSS + shadcn/ui** (UI components)
+- **NextAuth.js** (authentication)
+- **ExcelJS** (report generation)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Generate Prisma client
+npx prisma generate
+
+# Create the database
+npx prisma db push
+
+# Load demo data
+npx prisma db seed
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Demo Accounts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All demo accounts use the password: `password123`
 
-## Learn More
+| Role    | Email                              |
+| ------- | ---------------------------------- |
+| Admin   | admin@christfollowers.ph           |
+| Officer | maria.santos@christfollowers.ph    |
+| Member  | juan.delacruz@christfollowers.ph   |
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/
+    (dashboard)/          # Admin/Officer pages
+      dashboard/          # Overview dashboard
+      members/            # Member list + detail
+      transactions/       # Transaction list + new form
+      loans/              # Loan list + detail + new form
+      reports/            # Excel report downloads
+      my-account/         # Member self-service portal
+    api/                  # API routes
+    login/                # Login page
+  components/             # Reusable UI components
+  lib/                    # Auth, Prisma, formatting utilities
+prisma/
+  schema.prisma           # Database schema
+  seed.ts                 # Demo data seed script
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Currency
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All amounts are in Philippine Peso (PHP), displayed as ₱.

@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("MEMBER") // ADMIN, OFFICER, MEMBER
+  phone        String   @default("")
+  address      String   @default("")
+  joinedAt     DateTime @default(now())
+  active       Boolean  @default(true)
+
+  transactions   Transaction[] @relation("MemberTransactions")
+  recordedTxns   Transaction[] @relation("RecordedByUser")
+  loans          Loan[]        @relation("BorrowerLoans")
+  approvedLoans  Loan[]        @relation("ApprovedByUser")
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String   // DEPOSIT, WITHDRAWAL, LOAN_RELEASE, LOAN_PAYMENT
+  amount       Float
+  description  String   @default("")
+  loanId       String?
+  recordedById String
+  createdAt    DateTime @default(now())
+
+  user       User  @relation("MemberTransactions", fields: [userId], references: [id])
+  recordedBy User  @relation("RecordedByUser", fields: [recordedById], references: [id])
+  loan       Loan? @relation(fields: [loanId], references: [id])
+}
+
+model Loan {
+  id             String    @id @default(cuid())
+  userId         String
+  amount         Float     // principal
+  interestRate   Float     // annual percentage, e.g. 12.0
+  termMonths     Int
+  monthlyPayment Float
+  totalDue       Float
+  status         String    @default("PENDING") // PENDING, APPROVED, ACTIVE, PAID, REJECTED
+  purpose        String    @default("")
+  approvedById   String?
+  appliedAt      DateTime  @default(now())
+  approvedAt     DateTime?
+  startDate      DateTime?
+
+  user         User          @relation("BorrowerLoans", fields: [userId], references: [id])
+  approvedBy   User?         @relation("ApprovedByUser", fields: [approvedById], references: [id])
+  transactions Transaction[]
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
